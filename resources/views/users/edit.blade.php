@@ -1,48 +1,178 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-xl mx-auto">
-    <div class="bg-white rounded-2xl shadow p-8 border">
-        <h1 class="text-2xl font-bold text-slate-800 mb-2">Edit User Role</h1>
-        <p class="text-slate-500 mb-6">Update role for {{ $user->name }}</p>
 
-        <form action="{{ route('users.update', $user) }}" method="POST" class="space-y-5">
+<style>
+.useredit-root {
+    max-width: 640px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.useredit-header-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #0f0f0f;
+}
+
+.useredit-header-sub {
+    font-size: 12px;
+    color: #999;
+    margin-top: 2px;
+}
+
+.useredit-card {
+    background: #fff;
+    border: 0.5px solid #e5e2d8;
+    border-radius: 12px;
+    padding: 18px;
+}
+
+.useredit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.useredit-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.useredit-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #bbb;
+}
+
+.useredit-input,
+.useredit-select {
+    width: 100%;
+    background: #faf9f5;
+    border: 0.5px solid #e5e2d8;
+    border-radius: 8px;
+    padding: 9px 10px;
+    font-size: 12px;
+    color: #0f0f0f;
+    outline: none;
+    font-family: inherit;
+    transition: border-color .15s, background .15s;
+}
+
+.useredit-input:focus,
+.useredit-select:focus {
+    border-color: #0f0f0f;
+    background: #fff;
+}
+
+.useredit-input[disabled] {
+    background: #f5f3ec;
+    color: #777;
+    cursor: not-allowed;
+}
+
+.useredit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 6px;
+}
+
+.useredit-btn {
+    background: #0f0f0f;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity .15s;
+    font-family: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.useredit-btn:hover {
+    opacity: .85;
+}
+
+.useredit-btn-soft {
+    background: transparent;
+    color: #888;
+    border: 0.5px solid #e5e2d8;
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.useredit-btn-soft:hover {
+    background: #f5f3ec;
+    color: #0f0f0f;
+}
+</style>
+
+<div class="useredit-root">
+
+    <div>
+        <div class="useredit-header-title">Edit User Role</div>
+        <div class="useredit-header-sub">Update access level for {{ $user->name }}</div>
+    </div>
+
+    <div class="useredit-card">
+        <form action="{{ route('users.update', $user) }}" method="POST" class="useredit-form">
             @csrf
             @method('PUT')
 
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Name</label>
-                <input type="text" value="{{ $user->name }}" disabled
-                       class="w-full rounded-lg border-slate-300 bg-slate-100">
+            <div class="useredit-group">
+                <label class="useredit-label">Name</label>
+                <input type="text"
+                       value="{{ $user->name }}"
+                       class="useredit-input"
+                       disabled>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
-                <input type="text" value="{{ $user->email }}" disabled
-                       class="w-full rounded-lg border-slate-300 bg-slate-100">
+            <div class="useredit-group">
+                <label class="useredit-label">Email</label>
+                <input type="text"
+                       value="{{ $user->email }}"
+                       class="useredit-input"
+                       disabled>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Role</label>
-                <select name="role" class="w-full rounded-lg border-slate-300" required>
+            <div class="useredit-group">
+                <label class="useredit-label">Role</label>
+                <select name="role" class="useredit-select" required>
                     <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
                     <option value="cashier" {{ $user->role === 'cashier' ? 'selected' : '' }}>Cashier</option>
                     <option value="inventory" {{ $user->role === 'inventory' ? 'selected' : '' }}>Inventory Staff</option>
                 </select>
             </div>
 
-            <div class="flex gap-3 pt-4">
-                <button type="submit"
-                        class="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2 rounded-lg">
-                    Update Role
-                </button>
-
-                <a href="{{ route('users.index') }}"
-                   class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-5 py-2 rounded-lg">
+            <div class="useredit-actions">
+                <a href="{{ route('users.index') }}" class="useredit-btn-soft">
                     Cancel
                 </a>
+
+                <button type="submit" class="useredit-btn">
+                    Update Role
+                </button>
             </div>
+
         </form>
     </div>
+
 </div>
+
 @endsection

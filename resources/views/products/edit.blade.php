@@ -1,14 +1,95 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-3xl mx-auto px-4 py-6">
-    <div class="bg-white rounded-xl shadow-md p-6">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">Edit Product</h1>
-        <p class="text-gray-500 mb-6">Update the product details below.</p>
+
+<style>
+/* reuse same styles */
+.card {
+    background: #fff;
+    border: 0.5px solid #e5e2d8;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #0f0f0f;
+}
+
+.card-sub {
+    font-size: 12px;
+    color: #999;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #bbb;
+    letter-spacing: .08em;
+}
+
+.input {
+    background: #faf9f5;
+    border: 0.5px solid #e5e2d8;
+    border-radius: 8px;
+    padding: 9px 10px;
+    font-size: 13px;
+    outline: none;
+}
+
+.input:focus {
+    border-color: #0f0f0f;
+}
+
+.btn-primary {
+    background: #0f0f0f;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    opacity: .85;
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 0.5px solid #e5e2d8;
+    color: #888;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.btn-secondary:hover {
+    background: #f5f3ec;
+    color: #0f0f0f;
+}
+</style>
+
+<div class="max-w-xl mx-auto">
+
+    <div class="card space-y-5">
+
+        <div>
+            <div class="card-title">Edit Product</div>
+            <div class="card-sub">Update product details</div>
+        </div>
 
         @if ($errors->any())
-            <div class="bg-red-100 text-red-700 px-4 py-3 rounded-lg mb-4">
-                <ul class="list-disc pl-5">
+            <div style="background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px;border-radius:8px;font-size:12px;">
+                <ul style="margin:0;padding-left:16px;">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
@@ -16,58 +97,46 @@
             </div>
         @endif
 
-        <form action="{{ route('products.update', $product) }}" method="POST" class="space-y-5">
+        <form method="POST" action="{{ route('products.update', $product) }}" class="space-y-4">
             @csrf
             @method('PUT')
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Barcode</label>
-                <input type="text" name="barcode" value="{{ old('barcode', $product->barcode) }}"
-                       class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring focus:ring-blue-200"
-                       placeholder="Enter barcode">
+            <div class="input-group">
+                <label class="label">Barcode</label>
+                <input name="barcode" value="{{ old('barcode', $product->barcode) }}" class="input">
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-                <input type="text" name="name" value="{{ old('name', $product->name) }}"
-                       class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring focus:ring-blue-200"
-                       placeholder="Enter product name" required>
+            <div class="input-group">
+                <label class="label">Product Name</label>
+                <input name="name" value="{{ old('name', $product->name) }}" class="input" required>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                <input type="text" name="category" value="{{ old('category', $product->category) }}"
-                       class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring focus:ring-blue-200"
-                       placeholder="Enter category">
+            <div class="input-group">
+                <label class="label">Category</label>
+                <input name="category" value="{{ old('category', $product->category) }}" class="input">
             </div>
 
-            <div class="grid md:grid-cols-2 gap-5">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Price</label>
-                    <input type="number" step="0.01" name="price" value="{{ old('price', $product->price) }}"
-                           class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring focus:ring-blue-200"
-                           placeholder="0.00" required>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div class="input-group">
+                    <label class="label">Price</label>
+                    <input type="number" step="0.01" name="price" value="{{ old('price', $product->price) }}" class="input" required>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-                    <input type="number" name="stock" value="{{ old('stock', $product->stock) }}"
-                           class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring focus:ring-blue-200"
-                           placeholder="0" required>
+                <div class="input-group">
+                    <label class="label">Stock</label>
+                    <input type="number" name="stock" value="{{ old('stock', $product->stock) }}" class="input" required>
                 </div>
             </div>
 
-            <div class="flex justify-end gap-3 pt-4">
-                <a href="{{ route('products.index') }}"
-                   class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-5 py-2 rounded-lg">
-                    Cancel
-                </a>
-                <button type="submit"
-                        class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg shadow">
-                    Update Product
-                </button>
+            <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px;">
+                <a href="{{ route('products.index') }}" class="btn-secondary">Cancel</a>
+                <button type="submit" class="btn-primary">Update Product</button>
             </div>
+
         </form>
+
     </div>
+
 </div>
+
 @endsection

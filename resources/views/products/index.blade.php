@@ -1,114 +1,227 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 py-6">
-    <div class="bg-white rounded-xl shadow-md p-6">
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-800">Product Management</h1>
-                <p class="text-gray-500 text-sm">Manage your store products and stock levels.</p>
-            </div>
-            <a href="{{ route('products.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow">
-                + Add Product
-            </a>
+
+<style>
+.products-root {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* HEADER */
+.pg-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.pg-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #0f0f0f;
+}
+.pg-sub {
+    font-size: 12px;
+    color: #888;
+}
+
+/* BUTTON */
+.btn-main {
+    background: #0f0f0f;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    border: none;
+    cursor: pointer;
+}
+.btn-main:hover { opacity: .85; }
+
+.btn-soft {
+    background: #f5f3ec;
+    border: 0.5px solid #e5e2d8;
+    color: #666;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+/* FILTER CARD */
+.pg-card {
+    background: #fff;
+    border: 0.5px solid #e5e2d8;
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.pg-input, .pg-select {
+    width: 100%;
+    border: 0.5px solid #e5e2d8;
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 12px;
+    background: #faf9f5;
+    outline: none;
+}
+.pg-input:focus, .pg-select:focus {
+    border-color: #2563eb;
+}
+
+/* TABLE */
+.pg-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.pg-table thead {
+    background: #faf9f5;
+}
+.pg-table th {
+    font-size: 11px;
+    color: #888;
+    text-align: left;
+    padding: 10px;
+    font-weight: 500;
+}
+.pg-table td {
+    padding: 12px 10px;
+    border-top: 0.5px solid #f0ece0;
+    font-size: 12px;
+    color: #1a1a1a;
+}
+
+.pg-row:hover {
+    background: #faf9f5;
+}
+
+/* STOCK BADGES */
+.stock {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 20px;
+}
+
+.stock-ok { background:#ecfdf5; color:#059669; }
+.stock-low { background:#fffbeb; color:#d97706; }
+.stock-out { background:#fef2f2; color:#dc2626; }
+
+/* ACTIONS */
+.actions {
+    display: flex;
+    gap: 6px;
+}
+.btn-edit {
+    background: #f5f3ec;
+    border: 0.5px solid #e5e2d8;
+    padding: 6px 10px;
+    font-size: 11px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.btn-edit:hover { background: #ece8df; }
+
+.btn-delete {
+    background: transparent;
+    border: 0.5px solid #fca5a5;
+    color: #dc2626;
+    padding: 6px 10px;
+    font-size: 11px;
+    border-radius: 6px;
+}
+.btn-delete:hover { background: #fef2f2; }
+
+</style>
+
+<div class="products-root">
+
+    {{-- HEADER --}}
+    <div class="pg-header">
+        <div>
+            <div class="pg-title">Products</div>
+            <div class="pg-sub">Manage inventory and stock levels</div>
         </div>
 
-        @if(session('success'))
-            <div class="bg-green-100 text-green-700 px-4 py-3 rounded-lg mb-4">
-                {{ session('success') }}
+        <a href="{{ route('products.create') }}" class="btn-main">
+            + Add Product
+        </a>
+    </div>
+
+    {{-- FILTER --}}
+    <div class="pg-card">
+        <form method="GET" action="{{ route('products.index') }}"
+              style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;">
+
+            <input type="text" name="search"
+                   value="{{ request('search') }}"
+                   placeholder="Search product..."
+                   class="pg-input">
+
+            <select name="category" class="pg-select">
+                <option value="">All Categories</option>
+                @foreach($categories as $category)
+                    <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>
+                        {{ $category }}
+                    </option>
+                @endforeach
+            </select>
+
+            <select name="stock_status" class="pg-select">
+                <option value="">All Stock</option>
+                <option value="in_stock" {{ request('stock_status') == 'in_stock' ? 'selected' : '' }}>In Stock</option>
+                <option value="low_stock" {{ request('stock_status') == 'low_stock' ? 'selected' : '' }}>Low</option>
+                <option value="out_of_stock" {{ request('stock_status') == 'out_of_stock' ? 'selected' : '' }}>Out</option>
+            </select>
+
+            <div style="display:flex;gap:6px;">
+                <button type="submit" class="btn-main">Apply</button>
+                <a href="{{ route('products.index') }}" class="btn-soft">Reset</a>
             </div>
-        @endif
+        </form>
+    </div>
 
-        @if(session('error'))
-            <div class="bg-red-100 text-red-700 px-4 py-3 rounded-lg mb-4">
-                {{ session('error') }}
-            </div>
-        @endif
-
-        <div class="bg-white rounded-2xl shadow p-6 border mb-6">
-                    <form method="GET" action="{{ route('products.index') }}" class="grid md:grid-cols-4 gap-4">
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Search product name..."
-                            class="rounded-lg border-slate-300">
-
-                        <select name="category" class="rounded-lg border-slate-300">
-                            <option value="">All Categories</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>
-                                    {{ $category }}
-                                </option>
-                            @endforeach
-                        </select>
-
-                        <select name="stock_status" class="rounded-lg border-slate-300">
-                            <option value="">All Stock Status</option>
-                            <option value="in_stock" {{ request('stock_status') == 'in_stock' ? 'selected' : '' }}>In Stock</option>
-                            <option value="low_stock" {{ request('stock_status') == 'low_stock' ? 'selected' : '' }}>Low Stock</option>
-                            <option value="out_of_stock" {{ request('stock_status') == 'out_of_stock' ? 'selected' : '' }}>Out of Stock</option>
-                        </select>
-
-                        <div class="flex gap-2">
-                            <button type="submit"
-                                    class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg">
-                                Filter
-                            </button>
-
-                            <a href="{{ route('products.index') }}"
-                            class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-4 py-2 rounded-lg">
-                                Reset
-                            </a>
-                        </div>
-                    </form>
-                </div>
-
-        <div class="overflow-x-auto">
-            <table class="w-full border border-gray-200 rounded-lg overflow-hidden">
-                <thead class="bg-gray-100 text-gray-700">
+    {{-- TABLE --}}
+    <div class="pg-card">
+        <div style="overflow-x:auto;">
+            <table class="pg-table">
+                <thead>
                     <tr>
-                        <th class="p-3 text-left">Barcode</th>
-                        <th class="p-3 text-left">Product Name</th>
-                        <th class="p-3 text-left">Category</th>
-                        <th class="p-3 text-left">Price</th>
-                        <th class="p-3 text-left">Stock</th>
-                        <th class="p-3 text-center">Actions</th>
+                        <th>Barcode</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th style="text-align:center;">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
+
+                <tbody>
                     @forelse($products as $product)
-                        <tr class="hover:bg-gray-50">
-                            <td class="p-3">{{ $product->barcode ?? '-' }}</td>
-                            <td class="p-3 font-medium text-gray-800">{{ $product->name }}</td>
-                            <td class="p-3">{{ $product->category ?? '-' }}</td>
-                            <td class="p-3">₱{{ number_format($product->price, 2) }}</td>
-                            <td class="p-3">
-                                <td class="p-3">
+                        <tr class="pg-row">
+                            <td>{{ $product->barcode ?? '-' }}</td>
+                            <td style="font-weight:500;">{{ $product->name }}</td>
+                            <td>{{ $product->category ?? '-' }}</td>
+                            <td>₱{{ number_format($product->price, 2) }}</td>
+
+                            <td>
                                 @if($product->stock <= 0)
-                                    <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium">
-                                        Out of Stock (0)
-                                    </span>
+                                    <span class="stock stock-out">Out (0)</span>
                                 @elseif($product->stock <= 5)
-                                    <span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm font-medium">
-                                        Low Stock ({{ $product->stock }})
-                                    </span>
+                                    <span class="stock stock-low">{{ $product->stock }} left</span>
                                 @else
-                                    <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-medium">
-                                        In Stock ({{ $product->stock }})
-                                    </span>
+                                    <span class="stock stock-ok">{{ $product->stock }}</span>
                                 @endif
-                                </td>
-                            <td class="p-3">
-                                <div class="flex justify-center gap-2">
-                                    <a href="{{ route('products.edit', $product) }}"
-                                       class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm">
+                            </td>
+
+                            <td>
+                                <div class="actions" style="justify-content:center;">
+                                    <a href="{{ route('products.edit', $product) }}" class="btn-edit">
                                         Edit
                                     </a>
 
                                     <form action="{{ route('products.destroy', $product) }}" method="POST"
-                                          onsubmit="return confirm('Are you sure you want to delete this product?')">
+                                          onsubmit="return confirm('Delete this product?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
-                                                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm">
+                                        <button type="submit" class="btn-delete">
                                             Delete
                                         </button>
                                     </form>
@@ -117,12 +230,16 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="p-6 text-center text-gray-500">No products found.</td>
+                            <td colspan="6" style="text-align:center;padding:20px;color:#999;">
+                                No products found
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </div>
+
 </div>
+
 @endsection

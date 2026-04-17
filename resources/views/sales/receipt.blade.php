@@ -7,97 +7,328 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
+        body {
+            background: #f5f4f0;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .receipt-shell {
+            max-width: 760px;
+            margin: 40px auto;
+            padding: 0 16px;
+        }
+
+        .receipt-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .receipt-btn {
+            background: #0f0f0f;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 9px 14px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity .15s;
+            font-family: inherit;
+        }
+
+        .receipt-btn:hover {
+            opacity: .85;
+        }
+
+        .receipt-btn-soft {
+            background: transparent;
+            color: #888;
+            border: 0.5px solid #e5e2d8;
+            border-radius: 8px;
+            padding: 9px 14px;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: inherit;
+        }
+
+        .receipt-btn-soft:hover {
+            background: #f5f3ec;
+            color: #0f0f0f;
+        }
+
+        .receipt-card {
+            background: #fff;
+            border: 0.5px solid #e5e2d8;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .receipt-head {
+            text-align: center;
+            border-bottom: 0.5px solid #e5e2d8;
+            padding-bottom: 18px;
+            margin-bottom: 18px;
+        }
+
+        .receipt-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #0f0f0f;
+            margin-bottom: 4px;
+        }
+
+        .receipt-sub {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .receipt-meta {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        @media (min-width: 768px) {
+            .receipt-meta {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .receipt-meta-box {
+            background: #faf9f5;
+            border: 0.5px solid #eee7da;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .receipt-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: #bbb;
+            margin-bottom: 4px;
+        }
+
+        .receipt-value {
+            font-size: 13px;
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+
+        .receipt-table-wrap {
+            overflow-x: auto;
+        }
+
+        .receipt-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .receipt-table thead {
+            background: #faf9f5;
+        }
+
+        .receipt-table th {
+            padding: 10px 12px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #888;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .receipt-table td {
+            padding: 12px;
+            font-size: 12px;
+            color: #1a1a1a;
+            border-top: 0.5px solid #f0ece0;
+            vertical-align: middle;
+        }
+
+        .receipt-row:hover {
+            background: #fcfbf8;
+        }
+
+        .receipt-money {
+            font-weight: 500;
+            color: #0f0f0f;
+            white-space: nowrap;
+        }
+
+        .receipt-summary-wrap {
+            margin-top: 18px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .receipt-summary {
+            width: 100%;
+            max-width: 320px;
+            background: #faf9f5;
+            border: 0.5px solid #e5e2d8;
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .receipt-summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .receipt-summary-row strong {
+            color: #0f0f0f;
+            font-weight: 500;
+        }
+
+        .receipt-summary-total {
+            border-top: 0.5px solid #e5e2d8;
+            margin-top: 6px;
+            padding-top: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f0f0f;
+        }
+
+        .receipt-foot {
+            text-align: center;
+            margin-top: 22px;
+            padding-top: 16px;
+            border-top: 0.5px solid #e5e2d8;
+            font-size: 12px;
+            color: #999;
+            line-height: 1.7;
+        }
+
         @media print {
             .no-print {
                 display: none !important;
             }
 
             body {
-                background: white !important;
+                background: #fff !important;
+            }
+
+            .receipt-shell {
+                margin: 0;
+                max-width: 100%;
+                padding: 0;
             }
 
             .receipt-card {
-                box-shadow: none !important;
                 border: none !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                padding: 0;
             }
         }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen py-10">
+<body>
 
-    <div class="max-w-2xl mx-auto px-4">
-        <div class="no-print mb-6 flex justify-between items-center">
-            <a href="{{ route('sales.index') }}"
-               class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg">
-                ← Back to POS
+    <div class="receipt-shell">
+
+        <div class="receipt-toolbar no-print">
+            <a href="{{ route('sales.index') }}" class="receipt-btn-soft">
+                Back to POS
             </a>
 
-            <button onclick="window.print()"
-                    class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg">
+            <button onclick="window.print()" class="receipt-btn">
                 Print Receipt
             </button>
         </div>
 
-        <div class="receipt-card bg-white rounded-2xl shadow-lg border p-8">
-            <div class="text-center border-b pb-6 mb-6">
-                <h1 class="text-3xl font-bold text-slate-800">POS System</h1>
-                <p class="text-slate-500">Official Sales Receipt</p>
+        <div class="receipt-card">
+
+            <div class="receipt-head">
+                <div class="receipt-title">POS System</div>
+                <div class="receipt-sub">Official Sales Receipt</div>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-4 text-sm mb-6">
-                <div>
-                    <p><span class="font-semibold">Receipt No:</span> {{ $transaction->receipt_no }}</p>
-                    <p><span class="font-semibold">Date:</span> {{ $transaction->created_at->format('F d, Y h:i A') }}</p>
+            <div class="receipt-meta">
+                <div class="receipt-meta-box">
+                    <div class="receipt-label">Receipt No</div>
+                    <div class="receipt-value">{{ $transaction->receipt_no }}</div>
                 </div>
-                <div class="md:text-right">
-                    <p><span class="font-semibold">Cashier:</span> {{ $transaction->user->name ?? 'N/A' }}</p>
+
+                <div class="receipt-meta-box">
+                    <div class="receipt-label">Cashier</div>
+                    <div class="receipt-value">{{ $transaction->user->name ?? 'N/A' }}</div>
+                </div>
+
+                <div class="receipt-meta-box" style="grid-column: 1 / -1;">
+                    <div class="receipt-label">Transaction Date</div>
+                    <div class="receipt-value">{{ $transaction->created_at->format('F d, Y h:i A') }}</div>
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full border border-slate-200 rounded-lg overflow-hidden text-sm">
-                    <thead class="bg-slate-100">
+            <div class="receipt-table-wrap">
+                <table class="receipt-table">
+                    <thead>
                         <tr>
-                            <th class="p-3 text-left">Product</th>
-                            <th class="p-3 text-left">Qty</th>
-                            <th class="p-3 text-left">Price</th>
-                            <th class="p-3 text-left">Subtotal</th>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>Subtotal</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-200">
-                        @foreach($transaction->items as $item)
-                            <tr>
-                                <td class="p-3">{{ $item->product->name }}</td>
-                                <td class="p-3">{{ $item->quantity }}</td>
-                                <td class="p-3">₱{{ number_format($item->price, 2) }}</td>
-                                <td class="p-3">₱{{ number_format($item->subtotal, 2) }}</td>
+                    <tbody>
+                        @forelse($transaction->items as $item)
+                            <tr class="receipt-row">
+                                <td>{{ $item->product->name }}</td>
+                                <td>{{ $item->quantity }}</td>
+                                <td class="receipt-money">₱{{ number_format($item->price, 2) }}</td>
+                                <td class="receipt-money">₱{{ number_format($item->subtotal, 2) }}</td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="4" style="padding:20px;text-align:center;color:#999;">
+                                    No items found for this receipt.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
 
-            <div class="mt-8 flex justify-end">
-                <div class="w-full md:w-80 bg-slate-50 border rounded-xl p-4 space-y-2">
-                    <div class="flex justify-between">
-                        <span>Total:</span>
-                        <span class="font-semibold">₱{{ number_format($transaction->total_amount, 2) }}</span>
+            <div class="receipt-summary-wrap">
+                <div class="receipt-summary">
+                    <div class="receipt-summary-row">
+                        <span>Total</span>
+                        <strong>₱{{ number_format($transaction->total_amount, 2) }}</strong>
                     </div>
-                    <div class="flex justify-between">
-                        <span>Payment:</span>
-                        <span class="font-semibold">₱{{ number_format($transaction->payment, 2) }}</span>
+                    <div class="receipt-summary-row">
+                        <span>Payment</span>
+                        <strong>₱{{ number_format($transaction->payment, 2) }}</strong>
                     </div>
-                    <div class="flex justify-between text-lg font-bold border-t pt-3">
-                        <span>Change:</span>
-                        <span>₱{{ number_format($transaction->change_amount, 2) }}</span>
+                    <div class="receipt-summary-row receipt-summary-total">
+                        <span>Change</span>
+                        <strong>₱{{ number_format($transaction->change_amount, 2) }}</strong>
                     </div>
                 </div>
             </div>
 
-            <div class="text-center mt-10 text-sm text-slate-500 border-t pt-6">
-                <p>Thank you for your purchase!</p>
-                <p>Please keep this receipt for your reference.</p>
+            <div class="receipt-foot">
+                <div>Thank you for your purchase.</div>
+                <div>Please keep this receipt for your reference.</div>
             </div>
+
         </div>
     </div>
 
