@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\LogsActivity;
 use App\Models\Product;
 use App\Models\InventoryTransaction;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class InventoryController extends Controller
 {
+    use LogsActivity;
     public function index()
     {
         $products = Product::orderBy('name')->get();
@@ -41,6 +43,11 @@ class InventoryController extends Controller
         ]);
 
         return back()->with('success', 'Stock updated successfully.');
+                $this->logActivity(
+            'Stock Update',
+            'Inventory',
+            $request->type . ' for product: ' . $product->name . ' | Qty: ' . $request->quantity
+        );
     }
 
     public function logs(Request $request)

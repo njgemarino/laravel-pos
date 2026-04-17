@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
@@ -24,6 +25,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reports/daily-sales', [ReportController::class, 'dailySales'])->name('reports.daily-sales');
         Route::get('/reports/daily-sales/export', [ReportController::class, 'exportDailySales'])->name('reports.daily-sales.export');
         Route::get('/reports/monthly-sales', [ReportController::class, 'monthlySales'])->name('reports.monthly-sales');
+        Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
         });
 
     // ADMIN + INVENTORY STAFF

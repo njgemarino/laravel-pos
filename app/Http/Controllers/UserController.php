@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\LogsActivity;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    use LogsActivity;
    public function index(Request $request)
 {
     $query = User::query();
@@ -44,7 +46,13 @@ class UserController extends Controller
         ]);
 
         return redirect()->route('users.index')->with('success', 'User role updated successfully.');
+        $this->logActivity(
+    'Update User',
+    'Users',
+    'Updated role for ' . $user->name . ' to ' . $request->role
+);
     }
+    
 
     public function destroy(User $user)
     {
@@ -55,5 +63,10 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+        $this->logActivity(
+    'Delete User',
+    'Users',
+    'Deleted user: ' . $user->name
+);
     }
 }

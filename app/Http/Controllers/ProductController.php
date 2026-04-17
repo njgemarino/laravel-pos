@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    use LogsActivity;
+    
     public function index(Request $request)
 {
     $query = Product::query();
@@ -46,6 +49,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        
         $request->validate([
             'barcode' => 'nullable|unique:products,barcode',
             'name' => 'required',
@@ -61,8 +65,10 @@ class ProductController extends Controller
             'price',
             'stock'
         ]));
+        
 
         return redirect()->route('products.index')->with('success', 'Product added successfully.');
+        $this->logActivity('Create', 'Products', 'Created product: ' . $product->name);
     }
 
     public function edit(Product $product)
@@ -89,6 +95,7 @@ class ProductController extends Controller
         ]));
 
         return redirect()->route('products.index')->with('success', 'Product updated successfully.');
+        $this->logActivity('Update', 'Products', 'Updated product: ' . $product->name);
     }
 
     public function destroy(Product $product)
@@ -100,5 +107,6 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
+        $this->logActivity('Delete', 'Products', 'Deleted product: ' . $product->name);
     }
 }

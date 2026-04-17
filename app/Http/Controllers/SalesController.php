@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\LogsActivity;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\SaleItem;
@@ -12,6 +13,7 @@ use Illuminate\Support\Str;
 
 class SalesController extends Controller
 {
+    use LogsActivity;
     public function index()
     {
         $products = Product::where('stock', '>', 0)->orderBy('name')->get();
@@ -132,6 +134,11 @@ class SalesController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Transaction failed: ' . $e->getMessage());
+            $this->logActivity(
+    'Create Sale',
+    'Sales',
+    'Created transaction: ' . $transaction->receipt_no . ' | Total: ₱' . number_format($transaction->total_amount, 2)
+);
         }
     }
 
